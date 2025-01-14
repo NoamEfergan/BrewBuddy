@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BA2D367B03002F201F /* AddCoffeeScreen */; };
+		24F980BD2D367B03002F201F /* CoffeeTheme in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BC2D367B03002F201F /* CoffeeTheme */; };
+		24F980BF2D367B03002F201F /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BE2D367B03002F201F /* Models */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		2412E9EE2D36633500FCEC56 /* BrewBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrewBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2412EA042D36639000FCEC56 /* BrewBuddyKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BrewBuddyKit; sourceTree = "<group>"; };
@@ -37,6 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24F980BF2D367B03002F201F /* Models in Frameworks */,
+				24F980BD2D367B03002F201F /* CoffeeTheme in Frameworks */,
+				24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +57,7 @@
 			children = (
 				2412EA042D36639000FCEC56 /* BrewBuddyKit */,
 				2412E9F02D36633500FCEC56 /* BrewBuddy */,
+				24F980B92D367B03002F201F /* Frameworks */,
 				2412E9EF2D36633500FCEC56 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +68,13 @@
 				2412E9EE2D36633500FCEC56 /* BrewBuddy.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		24F980B92D367B03002F201F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,6 +97,9 @@
 			);
 			name = BrewBuddy;
 			packageProductDependencies = (
+				24F980BA2D367B03002F201F /* AddCoffeeScreen */,
+				24F980BC2D367B03002F201F /* CoffeeTheme */,
+				24F980BE2D367B03002F201F /* Models */,
 			);
 			productName = BrewBuddy;
 			productReference = 2412E9EE2D36633500FCEC56 /* BrewBuddy.app */;
@@ -355,6 +375,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		24F980BA2D367B03002F201F /* AddCoffeeScreen */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AddCoffeeScreen;
+		};
+		24F980BC2D367B03002F201F /* CoffeeTheme */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoffeeTheme;
+		};
+		24F980BE2D367B03002F201F /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2412E9E62D36633500FCEC56 /* Project object */;
 }

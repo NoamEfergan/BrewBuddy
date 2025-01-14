@@ -1,11 +1,14 @@
 import Foundation
+import SwiftData
+import Models
 
-public struct CoffeeModel {
-  public let name: String
-  public let roasterName: String
-  public let brewMethod: BrewMethod
-  public let price: Double
-
+@Model
+final class CoffeeDataModel {
+  var name: String
+  var roasterName: String
+  var brewMethod: BrewMethod
+  var price: Double
+  
   public init(name: String,
               roasterName: String,
               brewMethod: BrewMethod,

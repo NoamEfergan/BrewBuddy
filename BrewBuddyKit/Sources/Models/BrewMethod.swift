@@ -1,6 +1,6 @@
 import Foundation
 
-public enum BrewMethod: String, CaseIterable {
+public enum BrewMethod: String, CaseIterable, Codable {
   case espresso = "Espresso"
   case coldBrew = "Cold Brew"
   case pourOver = "Pour Over"

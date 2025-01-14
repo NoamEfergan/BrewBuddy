@@ -13,7 +13,6 @@ import Models
 class AddCoffeeScreenViewModel {
   var name: String = ""
   var roasterName: String = ""
-  var roastDate: Date = .init()
   var brewMethod: BrewMethod = .espresso
   var price: String = ""
 
@@ -33,7 +32,6 @@ class AddCoffeeScreenViewModel {
     return .init(
       name: name,
       roasterName: roasterName,
-      roastDate: roastDate,
       brewMethod: brewMethod,
       price: priceInDouble
     )
