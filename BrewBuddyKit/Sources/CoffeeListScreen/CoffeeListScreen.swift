@@ -1,14 +1,18 @@
+import CoffeeTheme
 import Models
 import SwiftData
 import SwiftUI
-import CoffeeTheme
 
 public struct CoffeeListScreen: View {
+  @Environment(\.modelContext) private var modelContext
   @Query(sort: [SortDescriptor(\CoffeeDataModel.name, comparator: .localizedStandard)])
   private var coffees: [CoffeeDataModel]
-  
-  public init() {}
-  
+  public var onDelete: (() -> Void)?
+
+  public init(onDelete: (() -> Void)? = nil) {
+    self.onDelete = onDelete
+  }
+
   public var body: some View {
     NavigationStack {
       Form {
@@ -19,6 +23,12 @@ public struct CoffeeListScreen: View {
                                score: coffee.rating)
           }
           .listRowBackground(CoffeeTheme.AccentColor.highlight)
+        }
+        .onDelete { indexSet in
+          for index in indexSet {
+            modelContext.delete(coffees[index])
+            onDelete?()
+          }
         }
       }
       .foregroundStyle(CoffeeTheme.AccentColor.text)
@@ -34,7 +44,7 @@ public struct CoffeeListScreen: View {
   for coffee in [CoffeeDataModel].mockCoffees {
     container.mainContext.insert(coffee)
   }
-  
+
   return NavigationView { CoffeeListScreen() }
     .modelContainer(container)
 }

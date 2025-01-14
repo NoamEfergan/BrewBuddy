@@ -12,6 +12,7 @@ import CoffeeTheme
 import Models
 import SwiftUI
 
+// MARK: - ContainerView
 struct ContainerView: View {
   @State private var viewModel = ContainerViewModel()
   @Environment(\.modelContext) private var modelContext
@@ -21,21 +22,38 @@ struct ContainerView: View {
         AddCoffeeScreen(didSaveCoffee: handleAddCoffee)
       }
       Tab("Coffee list", systemImage: "list.bullet", value: .coffeeList) {
-        CoffeeListScreen()
+        CoffeeListScreen {
+          viewModel.isShowingDeleteToast = true
+        }
       }
     }
     .tint(CoffeeTheme.AccentColor.text)
-    .toast(isPresenting: $viewModel.isShowingToast) {
+    .toast(isPresenting: $viewModel.isShowingSuccessToast) {
       AlertToast(displayMode: .hud, type: .complete(.green), title: "Successfully added coffee")
+    }
+    .toast(isPresenting: $viewModel.isShowingDeleteToast) {
+      AlertToast(displayMode: .hud, type: .regular, title: "Successfully deleted coffee")
     }
   }
 
   private func handleAddCoffee(_ coffeeModel: CoffeeModel) {
     modelContext.insert(CoffeeDataModel(coffeeModel: coffeeModel))
-    viewModel.isShowingToast = true
+    viewModel.isShowingSuccessToast = true
   }
 }
 
-#Preview {
-  ContainerView()
-}
+#if DEBUG
+  import SwiftData
+
+  #Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: CoffeeDataModel.self, configurations: config)
+    for coffee in [CoffeeDataModel].mockCoffees {
+      container.mainContext.insert(coffee)
+    }
+
+    return NavigationView { ContainerView() }
+      .modelContainer(container)
+  }
+
+#endif

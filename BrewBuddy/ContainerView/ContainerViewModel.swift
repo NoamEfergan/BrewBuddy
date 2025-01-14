@@ -5,7 +5,8 @@ import SwiftData
 @Observable
 final class ContainerViewModel {
   public var selectedTab: Tabs = .addCoffee
-  public var isShowingToast = false
+  public var isShowingSuccessToast = false
+  public var isShowingDeleteToast = false
 }
 
 enum Tabs {
