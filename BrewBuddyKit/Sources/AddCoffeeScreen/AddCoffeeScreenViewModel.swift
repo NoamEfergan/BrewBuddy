@@ -31,7 +31,7 @@ class AddCoffeeScreenViewModel {
     guard let priceInDouble = Double(price) else {
       throw CoffeeValidationError.priceInvalid
     }
-    return .init(
+    let model =  CoffeeModel(
       name: name,
       roasterName: roasterName,
       brewMethod: brewMethod,
@@ -39,6 +39,17 @@ class AddCoffeeScreenViewModel {
       origin: origin.isEmpty ? "Unknown origin" : origin,
       rating: rating
     )
+    wipeData()
+    return model
+  }
+  
+  private func wipeData() {
+    name = ""
+    roasterName = ""
+    brewMethod = .espresso
+    price = ""
+    origin = ""
+    rating = 6
   }
 }
 

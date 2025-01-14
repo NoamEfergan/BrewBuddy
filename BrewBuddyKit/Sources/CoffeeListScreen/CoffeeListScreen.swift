@@ -17,7 +17,7 @@ public struct CoffeeListScreen: View {
     NavigationStack {
       Form {
         ForEach(coffees) { coffee in
-          NavigationLink(destination: Text("test")) {
+          NavigationLink(destination: CoffeeDetailScreen(coffee: coffee)) {
             CoffeeListItemView(name: coffee.name,
                                roasterName: coffee.roasterName,
                                score: coffee.rating)

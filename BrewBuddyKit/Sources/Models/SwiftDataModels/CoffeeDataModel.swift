@@ -5,19 +5,24 @@ import SwiftData
 
 @Model
 public final class CoffeeDataModel {
+  @Attribute(.unique)
+  public var id: String
   public var name: String
   public var roasterName: String
   public var brewMethod: BrewMethod
   public var price: Double
   public var origin: String
   public var rating: Int
-  public init(name: String,
+
+  public init(id: String = UUID().uuidString,
+              name: String,
               roasterName: String,
               brewMethod: BrewMethod,
               price: Double,
               origin: String,
               rating: Int)
   {
+    self.id = id
     self.name = name
     self.roasterName = roasterName
     self.brewMethod = brewMethod
@@ -27,6 +32,7 @@ public final class CoffeeDataModel {
   }
 
   public init(coffeeModel: CoffeeModel) {
+    id = UUID().uuidString
     name = coffeeModel.name
     roasterName = coffeeModel.roasterName
     brewMethod = coffeeModel.brewMethod
@@ -98,7 +104,7 @@ public extension [CoffeeDataModel] {
                       brewMethod: .frenchPress,
                       price: 22.00,
                       origin: "Rwanda",
-                      rating: 5), // Updated mock data
+                      rating: 5),
     ]
   }
 }
