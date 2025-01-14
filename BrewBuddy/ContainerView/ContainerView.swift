@@ -6,9 +6,11 @@
 //
 
 import AddCoffeeScreen
+import AlertToast
+import CoffeeListScreen
+import CoffeeTheme
 import Models
 import SwiftUI
-import CoffeeTheme
 
 struct ContainerView: View {
   @State private var viewModel = ContainerViewModel()
@@ -18,16 +20,19 @@ struct ContainerView: View {
       Tab("Add Coffee", systemImage: "cup.and.heat.waves.fill", value: .addCoffee) {
         AddCoffeeScreen(didSaveCoffee: handleAddCoffee)
       }
+      Tab("Coffee list", systemImage: "list.bullet", value: .coffeeList) {
+        CoffeeListScreen()
+      }
     }
     .tint(CoffeeTheme.AccentColor.text)
+    .toast(isPresenting: $viewModel.isShowingToast) {
+      AlertToast(displayMode: .hud, type: .complete(.green), title: "Successfully added coffee")
+    }
   }
 
   private func handleAddCoffee(_ coffeeModel: CoffeeModel) {
-    let persistenceModel = CoffeeDataModel(name: coffeeModel.name,
-                                           roasterName: coffeeModel.roasterName,
-                                           brewMethod: coffeeModel.brewMethod,
-                                           price: coffeeModel.price)
-    modelContext.insert(persistenceModel)
+    modelContext.insert(CoffeeDataModel(coffeeModel: coffeeModel))
+    viewModel.isShowingToast = true
   }
 }
 

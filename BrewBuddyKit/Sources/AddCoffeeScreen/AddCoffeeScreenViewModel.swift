@@ -15,6 +15,8 @@ class AddCoffeeScreenViewModel {
   var roasterName: String = ""
   var brewMethod: BrewMethod = .espresso
   var price: String = ""
+  var origin: String = ""
+  var rating: Int = 6
 
   func onClickSave() throws(CoffeeValidationError) -> CoffeeModel {
     guard !name.isEmpty else {
@@ -33,7 +35,9 @@ class AddCoffeeScreenViewModel {
       name: name,
       roasterName: roasterName,
       brewMethod: brewMethod,
-      price: priceInDouble
+      price: priceInDouble,
+      origin: origin.isEmpty ? "Unknown origin" : origin,
+      rating: rating
     )
   }
 }

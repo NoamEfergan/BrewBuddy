@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Models
 
 @main
 struct BrewBuddyApp: App {

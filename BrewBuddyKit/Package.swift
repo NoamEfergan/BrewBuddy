@@ -15,6 +15,9 @@ let package = Package(
             name: "AddCoffeeScreen",
             targets: ["AddCoffeeScreen"]),
         .library(
+          name: "CoffeeListScreen",
+          targets: ["CoffeeListScreen"]),
+        .library(
           name: "CoffeeTheme",
           targets: ["CoffeeTheme"]),
         .library(
@@ -25,6 +28,10 @@ let package = Package(
         .target(
             name: "AddCoffeeScreen",
             dependencies: ["Models", "CoffeeTheme"]
+        ),
+        .target(
+          name: "CoffeeListScreen",
+          dependencies: ["Models", "CoffeeTheme"]
         ),
         .target(name: "Models"),
         .target(

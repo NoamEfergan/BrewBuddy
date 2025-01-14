@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24D3AD062D36AF0300C530F5 /* CoffeeListScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 24D3AD052D36AF0300C530F5 /* CoffeeListScreen */; };
+		24D3AD092D36AFDD00C530F5 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 24D3AD082D36AFDD00C530F5 /* AlertToast */; };
 		24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BA2D367B03002F201F /* AddCoffeeScreen */; };
 		24F980BD2D367B03002F201F /* CoffeeTheme in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BC2D367B03002F201F /* CoffeeTheme */; };
 		24F980BF2D367B03002F201F /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BE2D367B03002F201F /* Models */; };
@@ -43,8 +45,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24D3AD062D36AF0300C530F5 /* CoffeeListScreen in Frameworks */,
 				24F980BF2D367B03002F201F /* Models in Frameworks */,
 				24F980BD2D367B03002F201F /* CoffeeTheme in Frameworks */,
+				24D3AD092D36AFDD00C530F5 /* AlertToast in Frameworks */,
 				24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,6 +104,8 @@
 				24F980BA2D367B03002F201F /* AddCoffeeScreen */,
 				24F980BC2D367B03002F201F /* CoffeeTheme */,
 				24F980BE2D367B03002F201F /* Models */,
+				24D3AD052D36AF0300C530F5 /* CoffeeListScreen */,
+				24D3AD082D36AFDD00C530F5 /* AlertToast */,
 			);
 			productName = BrewBuddy;
 			productReference = 2412E9EE2D36633500FCEC56 /* BrewBuddy.app */;
@@ -129,6 +135,9 @@
 			);
 			mainGroup = 2412E9E52D36633500FCEC56;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				24D3AD072D36AFDD00C530F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2412E9EF2D36633500FCEC56 /* Products */;
 			projectDirPath = "";
@@ -376,7 +385,27 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		24D3AD072D36AFDD00C530F5 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elai950/AlertToast?tab=readme-ov-file#swift-package-manager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		24D3AD052D36AF0300C530F5 /* CoffeeListScreen */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoffeeListScreen;
+		};
+		24D3AD082D36AFDD00C530F5 /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24D3AD072D36AFDD00C530F5 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
 		24F980BA2D367B03002F201F /* AddCoffeeScreen */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AddCoffeeScreen;
