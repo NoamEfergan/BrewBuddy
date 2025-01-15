@@ -8,6 +8,10 @@ public struct CoffeeListScreen: View {
     @Query(sort: [SortDescriptor(\CoffeeDataModel.name, comparator: .localizedStandard)])
     private var coffees: [CoffeeDataModel]
     public var onDelete: (() -> Void)?
+    let columns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+    ]
 
     public init(onDelete: (() -> Void)? = nil) {
         self.onDelete = onDelete
@@ -15,24 +19,23 @@ public struct CoffeeListScreen: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
-                ForEach(coffees) { coffee in
-                    NavigationLink(destination: CoffeeDetailScreen(coffee: coffee)) {
-                        CoffeeListItemView(name: coffee.name,
-                                           roasterName: coffee.roasterName,
-                                           score: coffee.rating)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(coffees) { coffee in
+                        NavigationLink(destination: CoffeeDetailScreen(coffee: coffee)) {
+                            CoffeeListItemView(name: coffee.name,
+                                               roasterName: coffee.roasterName,
+                                               score: coffee.rating)
+                                .frame(height: 120)
+                                .frame(maxWidth: .infinity)
+                                .background(CoffeeTheme.AccentColor.highlight)
+                                .cornerRadius(18)
+                        }
                     }
-                    .listRowBackground(CoffeeTheme.AccentColor.highlight)
                 }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        modelContext.delete(coffees[index])
-                        onDelete?()
-                    }
-                }
+                .padding()
             }
             .foregroundStyle(CoffeeTheme.AccentColor.text)
-            .scrollContentBackground(.hidden)
             .background(CoffeeTheme.AccentColor.background)
         }
     }

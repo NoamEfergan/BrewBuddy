@@ -24,15 +24,18 @@ struct CoffeeListItemView: View {
                 .font(.title3)
                 .bold()
                 .foregroundStyle(CoffeeTheme.AccentColor.text)
-            HStack {
+            HStack(alignment: .bottom) {
                 Text(roasterName)
                     .font(.subheadline)
                 Spacer()
                 Text(formattedScore)
                     .font(.caption)
+                    .bold()
             }
             .foregroundStyle(CoffeeTheme.AccentColor.text.secondary)
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .multilineTextAlignment(.leading)
         .fontDesign(.rounded)
         .padding()
     }
