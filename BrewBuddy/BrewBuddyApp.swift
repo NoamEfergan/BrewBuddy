@@ -5,15 +5,15 @@
 //  Created by Noam Efergan on 14/01/2025.
 //
 
-import SwiftUI
-import SwiftData
 import Models
+import SwiftData
+import SwiftUI
 
 @main
 struct BrewBuddyApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-          CoffeeDataModel.self,
+            CoffeeDataModel.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,7 +26,7 @@ struct BrewBuddyApp: App {
 
     var body: some Scene {
         WindowGroup {
-          ContainerView()
+            ContainerView()
         }
         .modelContainer(sharedModelContainer)
     }

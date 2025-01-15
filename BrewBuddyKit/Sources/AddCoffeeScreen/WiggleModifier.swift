@@ -7,16 +7,17 @@
 import SwiftUI
 
 // MARK: - WiggleModifier
-struct WiggleModifier: ViewModifier {
-  let isAnimating: Bool
 
-  func body(content: Content) -> some View {
-    content
-      .rotationEffect(.degrees(isAnimating ? 2 : 0))
-      .animation(isAnimating ?
-        .easeInOut(duration: 0.1)
-        .repeatCount(3, autoreverses: true) :
-        .default,
-        value: isAnimating)
-  }
+struct WiggleModifier: ViewModifier {
+    let isAnimating: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .rotationEffect(.degrees(isAnimating ? 2 : 0))
+            .animation(isAnimating ?
+                .easeInOut(duration: 0.1)
+                .repeatCount(3, autoreverses: true) :
+                .default,
+                value: isAnimating)
+    }
 }

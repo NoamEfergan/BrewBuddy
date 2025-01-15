@@ -10,70 +10,71 @@ import Models
 import SwiftUI
 
 // MARK: - AddCoffeeScreen
+
 public struct AddCoffeeScreen: View {
-  @State private var viewModel = AddCoffeeScreenViewModel()
-  @State private var validationError: CoffeeValidationError? = nil
-  @State private var isAnimating = false
-  public var didSaveCoffee: ((CoffeeModel) -> Void)?
+    @State private var viewModel = AddCoffeeScreenViewModel()
+    @State private var validationError: CoffeeValidationError? = nil
+    @State private var isAnimating = false
+    public var didSaveCoffee: ((CoffeeModel) -> Void)?
 
-  public init(didSaveCoffee: ((CoffeeModel) -> Void)? = nil) {
-    self.didSaveCoffee = didSaveCoffee
-  }
+    public init(didSaveCoffee: ((CoffeeModel) -> Void)? = nil) {
+        self.didSaveCoffee = didSaveCoffee
+    }
 
-  public var body: some View {
-    Form {
-      Section {
-        TextField("Name", text: $viewModel.name)
-        TextField("Roaster Name", text: $viewModel.roasterName)
-        TextField("Price", text: $viewModel.price)
-          .keyboardType(.decimalPad)
-        TextField("Origin", text: $viewModel.origin)
-        Picker("Brew Method", selection: $viewModel.brewMethod) {
-          ForEach(BrewMethod.allCases, id: \.self) { method in
-            Text(method.rawValue)
-          }
-        }
-      }
-      Section {
-        HStack {
-          Button("Save") {
-            do {
-              let model = try viewModel.onClickSave()
-              didSaveCoffee?(model)
-              validationError = nil
-            } catch {
-              validationError = error as? CoffeeValidationError
+    public var body: some View {
+        Form {
+            Section {
+                TextField("Name", text: $viewModel.name)
+                TextField("Roaster Name", text: $viewModel.roasterName)
+                TextField("Price", text: $viewModel.price)
+                    .keyboardType(.decimalPad)
+                TextField("Origin", text: $viewModel.origin)
+                Picker("Brew Method", selection: $viewModel.brewMethod) {
+                    ForEach(BrewMethod.allCases, id: \.self) { method in
+                        Text(method.rawValue)
+                    }
+                }
             }
-          }
-          .frame(maxWidth: .infinity)
-          .tint(CoffeeTheme.AccentColor.highlight)
-          .modifier(WiggleModifier(isAnimating: isAnimating))
+            Section {
+                HStack {
+                    Button("Save") {
+                        do {
+                            let model = try viewModel.onClickSave()
+                            didSaveCoffee?(model)
+                            validationError = nil
+                        } catch {
+                            validationError = error as? CoffeeValidationError
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .tint(CoffeeTheme.AccentColor.highlight)
+                    .modifier(WiggleModifier(isAnimating: isAnimating))
+                }
+            } footer: {
+                if let error = validationError {
+                    Text(error.localizedDescription)
+                        .foregroundColor(CoffeeTheme.AccentColor.primary)
+                }
+            }
         }
-      } footer: {
-        if let error = validationError {
-          Text(error.localizedDescription)
-            .foregroundColor(CoffeeTheme.AccentColor.primary)
+        .animation(.bouncy, value: validationError)
+        .onChange(of: validationError) { _, newValue in
+            if newValue != nil {
+                isAnimating = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    isAnimating = false
+                }
+            }
         }
-      }
+        .foregroundStyle(CoffeeTheme.AccentColor.text)
+        .scrollContentBackground(.hidden)
+        .background(CoffeeTheme.AccentColor.background)
+        .navigationTitle("Add Coffee")
     }
-    .animation(.bouncy, value: validationError)
-    .onChange(of: validationError) { _, newValue in
-      if newValue != nil {
-        isAnimating = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-          isAnimating = false
-        }
-      }
-    }
-    .foregroundStyle(CoffeeTheme.AccentColor.text)
-    .scrollContentBackground(.hidden)
-    .background(CoffeeTheme.AccentColor.background)
-    .navigationTitle("Add Coffee")
-  }
 }
 
 #Preview {
-  NavigationView {
-    AddCoffeeScreen()
-  }
+    NavigationView {
+        AddCoffeeScreen()
+    }
 }

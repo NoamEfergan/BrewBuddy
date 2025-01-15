@@ -7,22 +7,26 @@ let package = Package(
     name: "BrewBuddyKit",
     defaultLocalization: "en",
     platforms: [
-      .iOS(.v17),
-      ],
+        .iOS(.v17),
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "AddCoffeeScreen",
-            targets: ["AddCoffeeScreen"]),
+            targets: ["AddCoffeeScreen"]
+        ),
         .library(
-          name: "CoffeeListScreen",
-          targets: ["CoffeeListScreen"]),
+            name: "CoffeeListScreen",
+            targets: ["CoffeeListScreen"]
+        ),
         .library(
-          name: "CoffeeTheme",
-          targets: ["CoffeeTheme"]),
+            name: "CoffeeTheme",
+            targets: ["CoffeeTheme"]
+        ),
         .library(
             name: "Models",
-            targets: ["Models"]),
+            targets: ["Models"]
+        ),
     ],
     targets: [
         .target(
@@ -30,15 +34,15 @@ let package = Package(
             dependencies: ["Models", "CoffeeTheme"]
         ),
         .target(
-          name: "CoffeeListScreen",
-          dependencies: ["Models", "CoffeeTheme"]
+            name: "CoffeeListScreen",
+            dependencies: ["Models", "CoffeeTheme"]
         ),
         .target(name: "Models"),
         .target(
-          name: "CoffeeTheme",
-          resources: [
-            .process("Resources/Colors.xcassets")
-          ]
+            name: "CoffeeTheme",
+            resources: [
+                .process("Resources/Colors.xcassets"),
+            ]
         ),
         .testTarget(
             name: "AddCoffeeScreenTests",

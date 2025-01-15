@@ -5,10 +5,10 @@
 ////  Created by Noam Efergan on 14/01/2025.
 ////
 //
-//import SwiftUI
-//import SwiftData
+// import SwiftUI
+// import SwiftData
 //
-//struct ContentView: View {
+// struct ContentView: View {
 //    @Environment(\.modelContext) private var modelContext
 //    @Query private var items: [Item]
 //
@@ -53,9 +53,9 @@
 //            }
 //        }
 //    }
-//}
+// }
 //
-//#Preview {
+// #Preview {
 //    ContentView()
 //        .modelContainer(for: Item.self, inMemory: true)
-//}
+// }
