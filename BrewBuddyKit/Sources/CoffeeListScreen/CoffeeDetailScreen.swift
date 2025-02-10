@@ -18,7 +18,6 @@ struct CoffeeDetailScreen: View {
             Section("info") {
                 LabeledContent("Roaster", value: coffee.roasterName)
                 LabeledContent("Origin", value: coffee.origin)
-                LabeledContent("Brew method", value: coffee.brewMethod.rawValue)
                 LabeledContent("Price",
                                value: coffee.price.formatted(.currency(code: Locale.current.currency?.identifier ?? "GBP")))
             }

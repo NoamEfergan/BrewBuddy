@@ -14,7 +14,6 @@ import Models
 class AddCoffeeScreenViewModel {
     var name: String = ""
     var roasterName: String = ""
-    var brewMethod: BrewMethod = .espresso
     var price: String = ""
     var origin: String = ""
     var rating: Int = 6
@@ -34,7 +33,6 @@ class AddCoffeeScreenViewModel {
         }
         let model = CoffeeModel(name: name,
                                 roasterName: roasterName,
-                                brewMethod: brewMethod,
                                 price: priceInDouble,
                                 origin: origin.isEmpty ? "Unknown origin" : origin,
                                 rating: rating)
@@ -45,7 +43,6 @@ class AddCoffeeScreenViewModel {
     private func wipeData() {
         name = ""
         roasterName = ""
-        brewMethod = .espresso
         price = ""
         origin = ""
         rating = 6

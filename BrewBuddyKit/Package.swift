@@ -37,6 +37,10 @@ let package = Package(
             name: "CoffeeListScreen",
             dependencies: ["Models", "CoffeeTheme"]
         ),
+        .target(
+            name: "ShotsScreen",
+            dependencies: ["Models", "CoffeeTheme"]
+        ),
         .target(name: "Models"),
         .target(
             name: "CoffeeTheme",

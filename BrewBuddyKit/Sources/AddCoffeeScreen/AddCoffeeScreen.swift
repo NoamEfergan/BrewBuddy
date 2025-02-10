@@ -29,11 +29,6 @@ public struct AddCoffeeScreen: View {
                 TextField("Price", text: $viewModel.price)
                     .keyboardType(.decimalPad)
                 TextField("Origin", text: $viewModel.origin)
-                Picker("Brew Method", selection: $viewModel.brewMethod) {
-                    ForEach(BrewMethod.allCases, id: \.self) { method in
-                        Text(method.rawValue)
-                    }
-                }
             }
             Section {
                 HStack {
