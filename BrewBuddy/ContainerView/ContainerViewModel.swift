@@ -12,4 +12,5 @@ final class ContainerViewModel {
 enum Tabs {
     case addCoffee
     case coffeeList
+    case addShot
 }

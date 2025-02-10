@@ -10,6 +10,7 @@ import AlertToast
 import CoffeeListScreen
 import CoffeeTheme
 import Models
+import ShotsScreen
 import SwiftUI
 
 // MARK: - ContainerView
@@ -27,6 +28,8 @@ struct ContainerView: View {
                     viewModel.isShowingDeleteToast = true
                 }
             }
+//          Tab("Log a shot", systemImage: "plus.circle", value: .addShot) {
+//          }
         }
         .tint(CoffeeTheme.AccentColor.text)
         .toast(isPresenting: $viewModel.isShowingSuccessToast) {

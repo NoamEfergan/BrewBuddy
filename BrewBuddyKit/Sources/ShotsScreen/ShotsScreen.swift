@@ -8,29 +8,34 @@
 import CoffeeTheme
 import CommonUI
 import Models
+import SwiftData
 import SwiftUI
 
 public struct ShotsScreen: View {
-    public let title: String
     public let didSaveShot: (ShotDataModel) -> Void
     @State private var viewModel = ShotScreenViewModel()
     @State private var isAnimating = false
     @State private var validationError: ShotScreenViewModel.ShotValidationError? = nil
+    @Query(sort: [SortDescriptor(\CoffeeDataModel.name, comparator: .localizedStandard)])
+    private var coffees: [CoffeeDataModel]
+    @State private var selectedCoffee: CoffeeDataModel?
 
-    public init(title: String,
-                didSaveShot: @escaping (ShotDataModel) -> Void)
-    {
-        self.title = title
+    public init(didSaveShot: @escaping (ShotDataModel) -> Void) {
         self.didSaveShot = didSaveShot
     }
 
     public var body: some View {
         VStack(spacing: 0) {
-            Text(title)
-                .font(.title)
-                .fontDesign(.rounded)
-                .bold()
             Form {
+                Section {
+                    Menu(selectedCoffee?.name ?? "Select a coffee") {
+                        ForEach(coffees) { coffee in
+                            Button(coffee.name) {
+                                selectedCoffee = coffee
+                            }
+                        }
+                    }
+                }
                 Section {
                     Picker("Brew method", selection: $viewModel.brewMethod) {
                         ForEach(BrewMethod.allCases, id: \.self) { method in
@@ -91,5 +96,12 @@ public struct ShotsScreen: View {
 }
 
 #Preview {
-    ShotsScreen(title: "Some Coffee Name") { shot in print("Noam: \(shot)") }
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: CoffeeDataModel.self, configurations: config)
+    for coffee in [CoffeeDataModel].mockCoffees {
+        container.mainContext.insert(coffee)
+    }
+
+    return ShotsScreen { shot in print("Noam: \(shot)") }
+        .modelContainer(container)
 }
