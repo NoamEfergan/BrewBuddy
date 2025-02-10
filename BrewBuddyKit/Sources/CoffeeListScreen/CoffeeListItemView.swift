@@ -24,6 +24,7 @@ struct CoffeeListItemView: View {
                 .font(.title3)
                 .bold()
                 .foregroundStyle(CoffeeTheme.AccentColor.text)
+            Spacer()
             HStack(alignment: .bottom) {
                 Text(roasterName)
                     .font(.subheadline)

@@ -13,6 +13,9 @@ public final class CoffeeDataModel {
     public var origin: String
     public var rating: Int
 
+    @Relationship(deleteRule: .cascade)
+    public var shots: [ShotDataModel] = []
+
     public init(id: String = UUID().uuidString,
                 name: String,
                 roasterName: String,

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RatingView: View {
+public struct RatingView: View {
     @Binding var rating: Int
 
     var label = ""
@@ -17,7 +17,11 @@ struct RatingView: View {
     var offColor = Color.gray
     var onColor = Color.yellow
 
-    var body: some View {
+    public init(rating: Binding<Int>) {
+        _rating = rating
+    }
+
+    public var body: some View {
         HStack {
             ForEach(1 ... maximumRating, id: \.self) { number in
                 Button {
