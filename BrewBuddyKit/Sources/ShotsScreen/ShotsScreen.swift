@@ -11,8 +11,19 @@ import Models
 import SwiftUI
 
 public struct ShotsScreen: View {
-    let title: String
+    public let title: String
+    public let didSaveShot: (ShotDataModel) -> Void
     @State private var viewModel = ShotScreenViewModel()
+    @State private var isAnimating = false
+    @State private var validationError: ShotScreenViewModel.ShotValidationError? = nil
+
+    public init(title: String,
+                didSaveShot: @escaping (ShotDataModel) -> Void)
+    {
+        self.title = title
+        self.didSaveShot = didSaveShot
+    }
+
     public var body: some View {
         VStack(spacing: 0) {
             Text(title)
@@ -51,6 +62,25 @@ public struct ShotsScreen: View {
                         .lineLimit(5, reservesSpace: true)
                     // TODO: Add a photo here
                 }
+                Section {
+                    Button("Save") {
+                        do {
+                            let model = try viewModel.save()
+                            validationError = nil
+                            didSaveShot(model)
+                        } catch {
+                            validationError = error as? ShotScreenViewModel.ShotValidationError
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .tint(CoffeeTheme.AccentColor.highlight)
+                    .modifier(WiggleModifier(isAnimating: isAnimating))
+                } footer: {
+                    if let error = validationError {
+                        Text(error.localizedDescription)
+                            .foregroundColor(CoffeeTheme.AccentColor.primary)
+                    }
+                }
             }
         }
         .foregroundStyle(CoffeeTheme.AccentColor.text)
@@ -61,5 +91,5 @@ public struct ShotsScreen: View {
 }
 
 #Preview {
-    ShotsScreen(title: "Some Coffee Name")
+    ShotsScreen(title: "Some Coffee Name") { shot in print("Noam: \(shot)") }
 }

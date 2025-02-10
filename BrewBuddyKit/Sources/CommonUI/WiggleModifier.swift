@@ -8,10 +8,14 @@ import SwiftUI
 
 // MARK: - WiggleModifier
 
-struct WiggleModifier: ViewModifier {
-    let isAnimating: Bool
+public struct WiggleModifier: ViewModifier {
+    public let isAnimating: Bool
 
-    func body(content: Content) -> some View {
+    public init(isAnimating: Bool) {
+        self.isAnimating = isAnimating
+    }
+
+    public func body(content: Content) -> some View {
         content
             .rotationEffect(.degrees(isAnimating ? 2 : 0))
             .animation(isAnimating ?
