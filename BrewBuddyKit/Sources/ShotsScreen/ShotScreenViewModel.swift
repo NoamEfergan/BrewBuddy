@@ -55,6 +55,7 @@ final class ShotScreenViewModel {
         case gramsInInvalid
         case gramsOutInvalid
         case timeInvalid
+        case noCoffeeSelected
 
         var localizedDescription: String {
             return switch self {
@@ -64,6 +65,8 @@ final class ShotScreenViewModel {
                 "Please enter a valid grams out value"
             case .timeInvalid:
                 "Please enter a valid time value"
+            case .noCoffeeSelected:
+                "Please select a coffee to log the shot to"
             }
         }
     }

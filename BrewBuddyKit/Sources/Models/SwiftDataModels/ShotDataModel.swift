@@ -35,4 +35,16 @@ public final class ShotDataModel {
         self.notes = notes
         self.createdAt = createdAt
     }
+
+    public static var mock: Self {
+        .init(
+            brewMethod: .espresso,
+            gramsIn: 18,
+            gramsOut: 36,
+            time: 30,
+            rating: 4,
+            notes: "This was a good shot",
+            createdAt: .now
+        )
+    }
 }

@@ -28,8 +28,9 @@ struct ContainerView: View {
                     viewModel.isShowingDeleteToast = true
                 }
             }
-//          Tab("Log a shot", systemImage: "plus.circle", value: .addShot) {
-//          }
+            Tab("Log a shot", systemImage: "plus.circle", value: .addShot) {
+                ShotsScreen()
+            }
         }
         .tint(CoffeeTheme.AccentColor.text)
         .toast(isPresenting: $viewModel.isShowingSuccessToast) {

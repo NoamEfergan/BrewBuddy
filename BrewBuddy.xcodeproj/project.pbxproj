@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		244B51EA2D5A4F7F00ED9A97 /* ShotsScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 244B51E92D5A4F7F00ED9A97 /* ShotsScreen */; };
 		24D3AD062D36AF0300C530F5 /* CoffeeListScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 24D3AD052D36AF0300C530F5 /* CoffeeListScreen */; };
 		24D3AD092D36AFDD00C530F5 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 24D3AD082D36AFDD00C530F5 /* AlertToast */; };
 		24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */ = {isa = PBXBuildFile; productRef = 24F980BA2D367B03002F201F /* AddCoffeeScreen */; };
@@ -49,6 +50,7 @@
 				24F980BF2D367B03002F201F /* Models in Frameworks */,
 				24F980BD2D367B03002F201F /* CoffeeTheme in Frameworks */,
 				24D3AD092D36AFDD00C530F5 /* AlertToast in Frameworks */,
+				244B51EA2D5A4F7F00ED9A97 /* ShotsScreen in Frameworks */,
 				24F980BB2D367B03002F201F /* AddCoffeeScreen in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -106,6 +108,7 @@
 				24F980BE2D367B03002F201F /* Models */,
 				24D3AD052D36AF0300C530F5 /* CoffeeListScreen */,
 				24D3AD082D36AFDD00C530F5 /* AlertToast */,
+				244B51E92D5A4F7F00ED9A97 /* ShotsScreen */,
 			);
 			productName = BrewBuddy;
 			productReference = 2412E9EE2D36633500FCEC56 /* BrewBuddy.app */;
@@ -397,6 +400,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		244B51E92D5A4F7F00ED9A97 /* ShotsScreen */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShotsScreen;
+		};
 		24D3AD052D36AF0300C530F5 /* CoffeeListScreen */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoffeeListScreen;

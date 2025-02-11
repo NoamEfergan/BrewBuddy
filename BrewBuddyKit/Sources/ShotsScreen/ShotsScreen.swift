@@ -12,7 +12,6 @@ import SwiftData
 import SwiftUI
 
 public struct ShotsScreen: View {
-    public let didSaveShot: (ShotDataModel) -> Void
     @State private var viewModel = ShotScreenViewModel()
     @State private var isAnimating = false
     @State private var validationError: ShotScreenViewModel.ShotValidationError? = nil
@@ -20,9 +19,7 @@ public struct ShotsScreen: View {
     private var coffees: [CoffeeDataModel]
     @State private var selectedCoffee: CoffeeDataModel?
 
-    public init(didSaveShot: @escaping (ShotDataModel) -> Void) {
-        self.didSaveShot = didSaveShot
-    }
+    public init() {}
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -70,9 +67,14 @@ public struct ShotsScreen: View {
                 Section {
                     Button("Save") {
                         do {
+                            guard let selectedCoffee else {
+                                validationError = ShotScreenViewModel.ShotValidationError.noCoffeeSelected
+                                return
+                            }
                             let model = try viewModel.save()
                             validationError = nil
-                            didSaveShot(model)
+                            selectedCoffee.shots.append(model)
+
                         } catch {
                             validationError = error as? ShotScreenViewModel.ShotValidationError
                         }
@@ -102,6 +104,6 @@ public struct ShotsScreen: View {
         container.mainContext.insert(coffee)
     }
 
-    return ShotsScreen { shot in print("Noam: \(shot)") }
+    return ShotsScreen()
         .modelContainer(container)
 }

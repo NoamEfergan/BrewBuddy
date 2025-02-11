@@ -27,6 +27,13 @@ struct CoffeeDetailScreen: View {
                 RatingView(rating: $rating)
                     .frame(maxWidth: .infinity)
             }
+            if !coffee.shots.isEmpty {
+                Section("Shots") {
+                    ForEach(coffee.shots) { shot in
+                        ShotSummaryView(shot: shot)
+                    }
+                }
+            }
         }
         .scrollContentBackground(.hidden)
         .background(CoffeeTheme.AccentColor.background)
@@ -47,10 +54,10 @@ struct CoffeeDetailScreen: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: CoffeeDataModel.self, configurations: config)
-    for coffee in [CoffeeDataModel].mockCoffees {
-        container.mainContext.insert(coffee)
-    }
+    let coffee = [CoffeeDataModel].mockCoffees.first!
+    coffee.shots.append(.mock)
+    coffee.shots.append(.mock)
 
-    return NavigationView { CoffeeDetailScreen(coffee: [CoffeeDataModel].mockCoffees.last!) }
+    return CoffeeDetailScreen(coffee: coffee)
         .modelContainer(container)
 }
