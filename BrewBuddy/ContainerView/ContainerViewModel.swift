@@ -7,6 +7,7 @@ final class ContainerViewModel {
     public var selectedTab: Tabs = .addCoffee
     public var isShowingSuccessToast = false
     public var isShowingDeleteToast = false
+    public var isShowingSuccessAddShotToast = false
 }
 
 enum Tabs {

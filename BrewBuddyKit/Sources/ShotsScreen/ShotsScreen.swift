@@ -18,74 +18,85 @@ public struct ShotsScreen: View {
     @Query(sort: [SortDescriptor(\CoffeeDataModel.name, comparator: .localizedStandard)])
     private var coffees: [CoffeeDataModel]
     @State private var selectedCoffee: CoffeeDataModel?
+    private let onNavigateToAdd: (() -> Void)?
+    private let onSuccessfulAdd: (() -> Void)?
 
-    public init() {}
+    public init(onNavigateToAdd: (() -> Void)? = nil, onSuccessfulAdd: (() -> Void)? = nil) {
+        self.onNavigateToAdd = onNavigateToAdd
+        self.onSuccessfulAdd = onSuccessfulAdd
+    }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Form {
-                Section {
-                    Menu(selectedCoffee?.name ?? "Select a coffee") {
-                        ForEach(coffees) { coffee in
-                            Button(coffee.name) {
-                                selectedCoffee = coffee
+        Group {
+            if coffees.isEmpty {
+                EmptyStatePopToAddView(onNavigateToAdd: onNavigateToAdd)
+            } else {
+                VStack(spacing: 0) {
+                    Form {
+                        Section {
+                            Menu(selectedCoffee?.name ?? "Select a coffee") {
+                                ForEach(coffees) { coffee in
+                                    Button(coffee.name) {
+                                        selectedCoffee = coffee
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-                Section {
-                    Picker("Brew method", selection: $viewModel.brewMethod) {
-                        ForEach(BrewMethod.allCases, id: \.self) { method in
-                            Text(method.rawValue)
-                                .tag(method)
-                        }
-                    }
-                    HStack {
-                        HStack {
-                            TextField("Grams in", text: $viewModel.gramsIn)
-                            Text("g")
-                        }
-
-                        HStack {
-                            TextField("Grams out", text: $viewModel.gramsOut)
-                            Text("g")
-                        }
-                    }
-                    .keyboardType(.decimalPad)
-                    HStack {
-                        TextField("Time (seconds)", text: $viewModel.time)
-                        Text("s")
-                    }
-                    RatingView(rating: $viewModel.rating)
-                }
-                .textFieldStyle(.roundedBorder)
-                Section("notes") {
-                    TextField("", text: $viewModel.notes, axis: .vertical)
-                        .lineLimit(5, reservesSpace: true)
-                    // TODO: Add a photo here
-                }
-                Section {
-                    Button("Save") {
-                        do {
-                            guard let selectedCoffee else {
-                                validationError = ShotScreenViewModel.ShotValidationError.noCoffeeSelected
-                                return
+                        Section {
+                            Picker("Brew method", selection: $viewModel.brewMethod) {
+                                ForEach(BrewMethod.allCases, id: \.self) { method in
+                                    Text(method.rawValue)
+                                        .tag(method)
+                                }
                             }
-                            let model = try viewModel.save()
-                            validationError = nil
-                            selectedCoffee.shots.append(model)
+                            HStack {
+                                HStack {
+                                    TextField("Grams in", text: $viewModel.gramsIn)
+                                    Text("g")
+                                }
 
-                        } catch {
-                            validationError = error as? ShotScreenViewModel.ShotValidationError
+                                HStack {
+                                    TextField("Grams out", text: $viewModel.gramsOut)
+                                    Text("g")
+                                }
+                            }
+                            .keyboardType(.decimalPad)
+                            HStack {
+                                TextField("Time (seconds)", text: $viewModel.time)
+                                Text("s")
+                            }
+                            RatingView(rating: $viewModel.rating)
                         }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .tint(CoffeeTheme.AccentColor.highlight)
-                    .modifier(WiggleModifier(isAnimating: isAnimating))
-                } footer: {
-                    if let error = validationError {
-                        Text(error.localizedDescription)
-                            .foregroundColor(CoffeeTheme.AccentColor.primary)
+                        .textFieldStyle(.roundedBorder)
+                        Section("notes") {
+                            TextField("", text: $viewModel.notes, axis: .vertical)
+                                .lineLimit(5, reservesSpace: true)
+                            // TODO: Add a photo here
+                        }
+                        Section {
+                            Button("Save") {
+                                do {
+                                    guard let selectedCoffee else {
+                                        validationError = ShotScreenViewModel.ShotValidationError.noCoffeeSelected
+                                        return
+                                    }
+                                    let model = try viewModel.save()
+                                    validationError = nil
+                                    selectedCoffee.shots.append(model)
+                                    onSuccessfulAdd?()
+                                } catch {
+                                    validationError = error as? ShotScreenViewModel.ShotValidationError
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .tint(CoffeeTheme.AccentColor.highlight)
+                            .modifier(WiggleModifier(isAnimating: isAnimating))
+                        } footer: {
+                            if let error = validationError {
+                                Text(error.localizedDescription)
+                                    .foregroundColor(CoffeeTheme.AccentColor.primary)
+                            }
+                        }
                     }
                 }
             }
@@ -106,4 +117,8 @@ public struct ShotsScreen: View {
 
     return ShotsScreen()
         .modelContainer(container)
+}
+
+#Preview("No coffees") {
+    ShotsScreen()
 }

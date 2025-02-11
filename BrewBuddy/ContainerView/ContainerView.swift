@@ -11,6 +11,7 @@ import CoffeeListScreen
 import CoffeeTheme
 import Models
 import ShotsScreen
+import SwiftData
 import SwiftUI
 
 // MARK: - ContainerView
@@ -26,10 +27,16 @@ struct ContainerView: View {
             Tab("Coffee list", systemImage: "list.bullet", value: .coffeeList) {
                 CoffeeListScreen {
                     viewModel.isShowingDeleteToast = true
+                } onNavigateToAdd: {
+                    viewModel.selectedTab = .addCoffee
                 }
             }
             Tab("Log a shot", systemImage: "plus.circle", value: .addShot) {
-                ShotsScreen()
+                ShotsScreen {
+                    viewModel.selectedTab = .addCoffee
+                } onSuccessfulAdd: {
+                    viewModel.isShowingSuccessAddShotToast = true
+                }
             }
         }
         .tint(CoffeeTheme.AccentColor.text)
@@ -39,6 +46,9 @@ struct ContainerView: View {
         .toast(isPresenting: $viewModel.isShowingDeleteToast) {
             AlertToast(displayMode: .hud, type: .regular, title: "Successfully deleted coffee")
         }
+        .toast(isPresenting: $viewModel.isShowingSuccessAddShotToast, duration: 3) {
+            AlertToast(displayMode: .hud, type: .complete(.green), title: "Successfully logged a shot")
+        }
     }
 
     private func handleAddCoffee(_ coffeeModel: CoffeeModel) {
@@ -47,18 +57,17 @@ struct ContainerView: View {
     }
 }
 
-#if DEBUG
-    import SwiftData
-
-    #Preview {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: CoffeeDataModel.self, configurations: config)
-        for coffee in [CoffeeDataModel].mockCoffees {
-            container.mainContext.insert(coffee)
-        }
-
-        return NavigationView { ContainerView() }
-            .modelContainer(container)
+#Preview("Loaded state") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: CoffeeDataModel.self, configurations: config)
+    for coffee in [CoffeeDataModel].mockCoffees {
+        container.mainContext.insert(coffee)
     }
 
-#endif
+    return NavigationView { ContainerView() }
+        .modelContainer(container)
+}
+
+#Preview("Empty state") {
+    ContainerView()
+}
