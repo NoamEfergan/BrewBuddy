@@ -17,11 +17,11 @@ let package = Package(
         .library(name: "Models", targets: ["Models"]),
     ],
     targets: [
-        .target(name: "AddCoffeeScreen", dependencies: ["Models", "CoffeeTheme"]),
+        .target(name: "AddCoffeeScreen", dependencies: ["Models", "CoffeeTheme", "CommonUI"]),
         .target(name: "CoffeeListScreen", dependencies: ["Models", "CoffeeTheme", "CommonUI"]),
         .target(name: "ShotsScreen", dependencies: ["Models", "CoffeeTheme", "CommonUI"]),
         .target(name: "Models"),
-        .target(name: "CommonUI"),
+        .target(name: "CommonUI", dependencies: ["CoffeeTheme"]),
         .target(name: "CoffeeTheme", resources: [.process("Resources/Colors.xcassets")]),
         .testTarget(name: "AddCoffeeScreenTests", dependencies: ["AddCoffeeScreen"]),
     ]
