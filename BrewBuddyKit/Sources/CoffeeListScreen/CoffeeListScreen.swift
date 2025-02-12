@@ -5,7 +5,6 @@ import SwiftData
 import SwiftUI
 
 public struct CoffeeListScreen: View {
-    @Environment(\.modelContext) private var modelContext
     @Query(sort: [SortDescriptor(\CoffeeDataModel.name, comparator: .localizedStandard)])
     private var coffees: [CoffeeDataModel]
     private var onDelete: (() -> Void)?
