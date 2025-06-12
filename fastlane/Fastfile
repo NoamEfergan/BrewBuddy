@@ -6,7 +6,6 @@ platform :ios do
 
   desc "Build the app"
   lane :build do
-    match(type: "appstore")
     gym(
       scheme: "BrewBuddy",
       configuration: "Release",
