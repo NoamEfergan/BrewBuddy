@@ -3,30 +3,43 @@ name: Build iOS App
 # When should this workflow run?
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     # We need a macOS runner for iOS builds
     runs-on: macos-latest
-    
+
     steps:
-    # First, we check out our code
-    - uses: actions/checkout@v4
-    
-    # Set up Ruby (for Fastlane)
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.1
-        bundler-cache: true
-    
-    # Install dependencies
-    - name: Install dependencies
-      run: bundle install
-    
-    # Build the app using Fastlane
-    - name: Build app
-      run: bundle exec fastlane build
+      # First, we check out our code
+      - uses: actions/checkout@v4
+
+      # Set up Xcode 16
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.0"
+
+      # Set up Ruby (for Fastlane)
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+
+      # Install dependencies
+      - name: Install dependencies
+        run: bundle install
+
+      # Set up code signing with Match
+      - name: Set up code signing
+        run: bundle exec fastlane match appstore --readonly
+        env:
+          MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      # Build the app using Fastlane
+      - name: Build app
+        run: bundle exec fastlane build
