@@ -1,4 +1,4 @@
-git_url("https://github.com/NoamEfergan/brewbuddy_certs")
+git_url("git@github.com:NoamEfergan/brewbuddy_certs")
 
 storage_mode("git")
 
