@@ -1,0 +1,32 @@
+name: Build iOS App
+
+# When should this workflow run?
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    # We need a macOS runner for iOS builds
+    runs-on: macos-latest
+    
+    steps:
+    # First, we check out our code
+    - uses: actions/checkout@v4
+    
+    # Set up Ruby (for Fastlane)
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.1
+        bundler-cache: true
+    
+    # Install dependencies
+    - name: Install dependencies
+      run: bundle install
+    
+    # Build the app using Fastlane
+    - name: Build app
+      run: bundle exec fastlane build

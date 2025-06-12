@@ -1,10 +1,10 @@
 {
-  "originHash" : "ed47cad79f28ec9de43356720101ecbb213743e7a60c4675db7e1a041846e923",
+  "originHash" : "b0ff5bd16e8e6da04a2b6ba43f203265d89d56b1d7d38786c5c699cd1663ed25",
   "pins" : [
     {
-      "identity" : "alerttoast?tab=readme-ov-file#swift-package-manager",
+      "identity" : "alerttoast",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/elai950/AlertToast?tab=readme-ov-file#swift-package-manager",
+      "location" : "https://github.com/elai950/AlertToast",
       "state" : {
         "revision" : "b39252eacd159904afd7d718bba0afabb87f2f2f",
         "version" : "1.3.9"
