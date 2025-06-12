@@ -45,7 +45,7 @@ jobs:
 
       # Set up code signing with Match
       - name: Set up code signing
-        run: bundle exec fastlane match appstore --readonly
+        run: bundle exec fastlane match appstore --readonly --app_identifier NoamEfergan.BrewBuddy
         env:
           MATCH_REPOSITORY: ${{ secrets.MATCH_REPOSITORY }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
