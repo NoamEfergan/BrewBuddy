@@ -4,15 +4,30 @@
 default_platform :ios
 platform :ios do
 
+  desc "Sync certificates"
+  lane :sync_certificates do
+    match(
+      type: "appstore",
+      readonly: true,
+      app_identifier: "NoamEfergan.BrewBuddy"
+    )
+  end
+
   desc "Build the app"
   lane :build do
+    sync_certificates
+
     gym(
       scheme: "BrewBuddy",
       configuration: "Release",
       export_method: "app-store",
-      output_directory: "./build"
+      output_directory: "./build",
+      export_options: {
+        provisioningProfiles: {
+          "NoamEfergan.BrewBuddy" => "match AppStore NoamEfergan.BrewBuddy"
+        }
+      }
     )
   end
-
 
 end
