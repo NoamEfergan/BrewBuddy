@@ -6,27 +6,36 @@ platform :ios do
 
   desc "Sync certificates"
   lane :sync_certificates do
+    # Ensure we have the right certificates
     match(
       type: "appstore",
       readonly: true,
-      app_identifier: "NoamEfergan.BrewBuddy"
+      app_identifier: "NoamEfergan.BrewBuddy",
+      force_for_new_devices: false,
+      skip_confirmation: true,
+      verbose: true
     )
   end
 
   desc "Build the app"
   lane :build do
+    # Ensure certificates are synced
     sync_certificates
 
+    # Build the app
     gym(
       scheme: "BrewBuddy",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
+      clean: true,
       export_options: {
+        method: "app-store",
         provisioningProfiles: {
           "NoamEfergan.BrewBuddy" => "match AppStore NoamEfergan.BrewBuddy"
         }
-      }
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
   end
 
