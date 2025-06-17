@@ -19,23 +19,25 @@ platform :ios do
 
   desc "Build the app"
   lane :build do
-    # Ensure certificates are synced
-    sync_certificates
+    # First ensure certificates are synced
+    match(
+      type: "appstore",
+      readonly: true,
+      app_identifier: "NoamEfergan.BrewBuddy"
+    )
 
-    # Build the app
+    # Build the app with increased timeout
     gym(
       scheme: "BrewBuddy",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
       clean: true,
-      export_options: {
-        method: "app-store",
-        provisioningProfiles: {
-          "NoamEfergan.BrewBuddy" => "match AppStore NoamEfergan.BrewBuddy"
-        }
+      build_settings: {
+        "ENABLE_BITCODE" => "NO"
       },
-      xcargs: "-allowProvisioningUpdates"
+      xcodebuild_formatter: "xcbeautify",
+      xcodebuild_command: "xcodebuild -showBuildSettings -scheme BrewBuddy -project ./BrewBuddy.xcodeproj -configuration Release -timeout 300"
     )
   end
 
