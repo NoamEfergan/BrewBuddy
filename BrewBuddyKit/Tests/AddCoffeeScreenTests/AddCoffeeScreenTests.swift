@@ -1,6 +1,11 @@
-@testable import BrewBuddyKit
-import Testing
+@testable import AddCoffeeScreen
+@testable import Models
+import XCTest
 
-@Test func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+class AddCoffeeScreenTests: XCTestCase {
+    func testExample() throws {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        XCTAssertTrue(true)
+    }
 }

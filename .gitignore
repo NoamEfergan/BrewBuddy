@@ -20,3 +20,5 @@ DerivedData
 *.xcuserstate
 *.dsym
 compile_commands.json
+fastlane/test_output
+fastlane/report.xml
