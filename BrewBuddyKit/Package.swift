@@ -8,6 +8,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "AddCoffeeScreen", targets: ["AddCoffeeScreen"]),

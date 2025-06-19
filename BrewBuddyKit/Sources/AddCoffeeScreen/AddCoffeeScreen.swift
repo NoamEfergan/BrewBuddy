@@ -24,14 +24,14 @@ public struct AddCoffeeScreen: View {
 
     public var body: some View {
         Form {
-            Section {
+            Section("Coffee Details") {
                 TextField("Name", text: $viewModel.name)
                 TextField("Roaster Name", text: $viewModel.roasterName)
                 TextField("Price", text: $viewModel.price)
                     .keyboardType(.decimalPad)
                 TextField("Origin", text: $viewModel.origin)
             }
-            Section {
+            Section("Actions") {
                 HStack {
                     Button("Save") {
                         do {
