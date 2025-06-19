@@ -1,43 +1,35 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
 
+fastlane_version '2.225.0'
+
 default_platform :ios
 platform :ios do
 
-  desc "Sync certificates"
-  lane :sync_certificates do
-    # Ensure we have the right certificates
-    match(
-      type: "appstore",
-      readonly: true,
-      app_identifier: "NoamEfergan.BrewBuddy",
-      force_for_new_devices: false,
-      skip_confirmation: true,
-      verbose: true
-    )
-  end
-
   desc "Build the app"
   lane :build do
-    # First ensure certificates are synced
-    match(
-      type: "appstore",
-      readonly: true,
-      app_identifier: "NoamEfergan.BrewBuddy"
-    )
-
-    # Build the app with increased timeout
+    # Build the app (code signing should be done separately)
     gym(
-      scheme: "BrewBuddy",
+      scheme: "YourAppScheme",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
+      export_options: {
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false
+      }
+    )
+  end
+
+  desc "Run tests"
+  lane :test do
+    scan(
+      scheme: "YourAppScheme",
       clean: true,
-      build_settings: {
-        "ENABLE_BITCODE" => "NO"
-      },
-      xcodebuild_formatter: "xcbeautify",
-      xcodebuild_command: "xcodebuild -showBuildSettings -scheme BrewBuddy -project ./BrewBuddy.xcodeproj -configuration Release -timeout 300"
+      devices: ENV["TEST_DEVICE"] || "iPhone 15 Pro",
+      output_directory: "./fastlane/test_output",
+      output_types: "html,junit"
     )
   end
 
