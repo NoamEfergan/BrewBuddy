@@ -27,9 +27,10 @@ platform :ios do
     scan(
       scheme: "BrewBuddy",
       clean: true,
-      devices: ENV["TEST_DEVICE"] || "iPhone 16 Pro",
+      device: ENV["TEST_DEVICE"] || "iPhone 16 Pro",
       output_directory: "./fastlane/test_output",
-      output_types: "html,junit"
+      output_types: "html,junit",
+      skip_detect_devices: true
     )
   end
 
