@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "48B0857B-DE91-4181-802C-402E6DD581DC",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:BrewBuddy.xcodeproj",
+      "identifier" : "2412E9ED2D36633500FCEC56",
+      "name" : "BrewBuddy"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:BrewBuddyKit",
+        "identifier" : "AddCoffeeScreenTests",
+        "name" : "AddCoffeeScreenTests"
+      }
+    }
+  ],
+  "version" : 1
+}

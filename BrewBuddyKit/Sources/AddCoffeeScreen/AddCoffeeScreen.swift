@@ -31,7 +31,7 @@ public struct AddCoffeeScreen: View {
                     .keyboardType(.decimalPad)
                 TextField("Origin", text: $viewModel.origin)
             }
-            Section("Actions") {
+            Section {
                 HStack {
                     Button("Save") {
                         do {

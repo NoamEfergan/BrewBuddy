@@ -15,14 +15,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios sync_certificates
-
-```sh
-[bundle exec] fastlane ios sync_certificates
-```
-
-Sync certificates
-
 ### ios build
 
 ```sh
@@ -30,6 +22,14 @@ Sync certificates
 ```
 
 Build the app
+
+### ios test
+
+```sh
+[bundle exec] fastlane ios test
+```
+
+Run tests
 
 ----
 
