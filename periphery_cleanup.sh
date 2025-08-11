@@ -13,6 +13,43 @@ IFS=$'\n\t'
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# CLI arguments
+AUTO_MODE=0
+OVERRIDE_SCHEME=""
+OVERRIDE_TARGET=""
+OVERRIDE_WORKSPACE=""
+OVERRIDE_PROJECT=""
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [options]
+
+Options:
+  -a, --auto              Generate .periphery.yml non-interactively (no prompts)
+  -s, --scheme NAME       Scheme to use when generating config (auto mode)
+  -t, --target NAME       Target to use when generating config (auto mode)
+  -w, --workspace PATH    Use this .xcworkspace (auto mode)
+  -p, --project PATH      Use this .xcodeproj (auto mode)
+  -h, --help              Show this help
+
+Defaults:
+  - Without --auto, the script launches Periphery's guided setup (interactive)
+  - With --auto, the script detects workspace/project & picks a scheme/target
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -a|--auto) AUTO_MODE=1; shift ;;
+    -s|--scheme) OVERRIDE_SCHEME="$2"; shift 2 ;;
+    -t|--target) OVERRIDE_TARGET="$2"; shift 2 ;;
+    -w|--workspace) OVERRIDE_WORKSPACE="$2"; shift 2 ;;
+    -p|--project) OVERRIDE_PROJECT="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) err "Unknown option: $1"; usage; exit 1 ;;
+  esac
+done
+
 # Determine project root robustly
 determine_root() {
   local dir
@@ -66,8 +103,8 @@ echo "$ASCII_LOGO"
 if ! command -v periphery >/dev/null 2>&1; then
   warn "Periphery not found. Attempting install via Homebrew."
   if command -v brew >/dev/null 2>&1; then
-    info "brew install peripheryapp/periphery/periphery"
-    brew install peripheryapp/periphery/periphery || {
+    info "brew install periphery"
+    brew install periphery || {
       err "Failed to install Periphery via Homebrew. Please install Periphery manually and re-run."
       exit 1
     }
@@ -99,17 +136,95 @@ append_targets_to_config() {
   fi
 }
 
-# 2) Ensure .periphery.yml exists; if not, run interactive setup (normal Periphery flow)
+# 2) Ensure .periphery.yml exists
 CONFIG_FILE="$ROOT_DIR/.periphery.yml"
 if [[ ! -f "$CONFIG_FILE" ]]; then
-  warn ".periphery.yml not found. Launching interactive Periphery setup..."
-  bold "(You will be prompted by Periphery. Choose workspace/project, scheme, and targets as usual.)"
-  periphery scan --setup || { err "Periphery setup failed."; exit 1; }
-  if [[ ! -f "$CONFIG_FILE" ]]; then
-    err "Setup finished but .periphery.yml was not created. Aborting."
-    exit 1
+  if [[ "$AUTO_MODE" -eq 1 ]]; then
+    warn ".periphery.yml not found. Generating a non-interactive configuration (auto mode)..."
+
+    # Resolve workspace/project
+    if [[ -n "$OVERRIDE_WORKSPACE" ]]; then
+      WORKSPACE_CANDIDATE="$OVERRIDE_WORKSPACE"
+    else
+      WORKSPACE_CANDIDATE=$(find "$ROOT_DIR" -maxdepth 1 -name "*.xcworkspace" -print -quit || true)
+    fi
+    if [[ -n "$OVERRIDE_PROJECT" ]]; then
+      PROJECT_CANDIDATE="$OVERRIDE_PROJECT"
+    else
+      PROJECT_CANDIDATE=$(find "$ROOT_DIR" -maxdepth 1 -name "*.xcodeproj" -print -quit || true)
+    fi
+
+    if [[ -n "$WORKSPACE_CANDIDATE" ]]; then
+      info "Using workspace: $(basename "$WORKSPACE_CANDIDATE")"
+      LIST_OUTPUT=$(xcodebuild -list -workspace "$WORKSPACE_CANDIDATE" 2>/dev/null || true)
+    elif [[ -n "$PROJECT_CANDIDATE" ]]; then
+      info "Using project: $(basename "$PROJECT_CANDIDATE")"
+      LIST_OUTPUT=$(xcodebuild -list -project "$PROJECT_CANDIDATE" 2>/dev/null || true)
+    else
+      err "No .xcworkspace or .xcodeproj found at $ROOT_DIR. Cannot configure Periphery."
+      exit 1
+    fi
+
+    # Extract schemes and targets (compatible with bash 3.2 on macOS)
+    SCHEMES=()
+    TARGETS=()
+    while IFS= read -r line; do
+      [[ -n "$line" ]] && SCHEMES+=("$line")
+    done <<EOF
+$(printf "%s\n" "$LIST_OUTPUT" | awk '/Schemes:/{flag=1;next} flag && NF {print $0} /^\s*$/{if(flag) exit}' | sed 's/^ *//;s/ *$//')
+EOF
+    while IFS= read -r line; do
+      [[ -n "$line" ]] && TARGETS+=("$line")
+    done <<EOF
+$(printf "%s\n" "$LIST_OUTPUT" | awk '/Targets:/{flag=1;next} flag && NF {print $0} /^\s*$/{if(flag) exit}' | sed 's/^ *//;s/ *$//')
+EOF
+
+    DEFAULT_SCHEME="${OVERRIDE_SCHEME:-${SCHEMES[0]:-}}"
+    DEFAULT_TARGET="${OVERRIDE_TARGET:-${TARGETS[0]:-}}"
+
+    # Prefer a scheme/target named BrewBuddy if present and not overridden
+    if [[ -z "$OVERRIDE_SCHEME" ]]; then
+      for s in "${SCHEMES[@]}"; do
+        if [[ "$s" == "BrewBuddy" ]]; then DEFAULT_SCHEME="$s"; break; fi
+      done
+    fi
+    if [[ -z "$OVERRIDE_TARGET" ]]; then
+      for t in "${TARGETS[@]}"; do
+        if [[ "$t" == "BrewBuddy" ]]; then DEFAULT_TARGET="$t"; break; fi
+      done
+    fi
+
+    if [[ -z "$DEFAULT_SCHEME" || -z "$DEFAULT_TARGET" ]]; then
+      err "Failed to detect a scheme/target from xcodebuild. Use --scheme/--target or ensure the project builds."
+      exit 1
+    fi
+
+    {
+      if [[ -n "$WORKSPACE_CANDIDATE" ]]; then
+        echo "workspace: $(basename "$WORKSPACE_CANDIDATE")"
+      else
+        echo "project: $(basename "$PROJECT_CANDIDATE")"
+      fi
+      echo "schemes:"
+      echo "  - $DEFAULT_SCHEME"
+      echo "targets:"
+      echo "  - $DEFAULT_TARGET"
+      echo "retain_public: false"
+      echo "retain_objc_accessible: false"
+      echo "clean_build: false"
+    } > "$CONFIG_FILE"
+
+    good "Created $CONFIG_FILE (scheme=$DEFAULT_SCHEME, target=$DEFAULT_TARGET)"
+  else
+    warn ".periphery.yml not found. Launching interactive Periphery setup..."
+    bold "(You will be prompted by Periphery. Choose workspace/project, scheme, and targets as usual.)"
+    periphery scan --setup || { err "Periphery setup failed."; exit 1; }
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+      err "Setup finished but .periphery.yml was not created. Aborting."
+      exit 1
+    fi
+    good "Created $CONFIG_FILE via interactive setup"
   fi
-  good "Created $CONFIG_FILE via interactive setup"
 else
   good "Found existing .periphery.yml"
 fi
@@ -120,8 +235,24 @@ SCAN_JSON_1="$WORK_DIR/scan_1.json"
 SCAN_JSON_2="$WORK_DIR/scan_2.json"
 REPORT_TXT="$WORK_DIR/report.txt"
 REMOVABLE_FILES_TXT="$WORK_DIR/removable_files.txt"
-APPLIED_MARKERS_TXT="$WORK_DIR/applied_markers.txt"
-> "$REPORT_TXT"; > "$REMOVABLE_FILES_TXT"; > "$APPLIED_MARKERS_TXT"
+DELETED_SYMBOLS_TXT="$WORK_DIR/deleted_symbols.txt"
+: > "$REPORT_TXT"; : > "$REMOVABLE_FILES_TXT"; : > "$DELETED_SYMBOLS_TXT"
+
+# Keep artifacts out of source control by ensuring .gitignore contains the work directory
+GITIGNORE_FILE="$ROOT_DIR/.gitignore"
+if [[ -f "$GITIGNORE_FILE" ]]; then
+  if ! grep -qE '^\.periphery_cleanup/?$' "$GITIGNORE_FILE" 2>/dev/null; then
+    echo "# Periphery cleanup artifacts" >> "$GITIGNORE_FILE"
+    echo ".periphery_cleanup/" >> "$GITIGNORE_FILE"
+    good "Updated .gitignore to ignore .periphery_cleanup/"
+  fi
+else
+  {
+    echo "# Periphery cleanup artifacts"
+    echo ".periphery_cleanup/"
+  } > "$GITIGNORE_FILE"
+  good "Created .gitignore to ignore .periphery_cleanup/"
+fi
 
 bold "\nRunning Periphery scan (pass 1)..."
 periphery scan --config "$CONFIG_FILE" --format json --disable-update-check > "$SCAN_JSON_1" || {
@@ -142,7 +273,7 @@ cat > "$WORK_DIR/annotate.py" <<'PY'
 import json, os, sys, re
 
 scan_path = sys.argv[1]
-applied_path = sys.argv[2]
+deleted_log_path = sys.argv[2]
 
 with open(scan_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -166,17 +297,19 @@ for e in data:
         'accessibility': e.get('accessibility','')
     })
 
-# Heuristic-safe annotation: insert a @available(*, deprecated, ...) attribute
-# on the line above the declaration if not already present.
+deleted = []
 
-def already_annotated(lines, idx):
-    if idx-2 >= 0:
-        prev = lines[idx-2].strip()
-        if 'periphery-deprecated' in prev:
-            return True
-        if prev.startswith('@available(') and 'deprecated' in prev:
-            return True
-    return False
+def is_stored_property_line(line: str) -> bool:
+    # Single-line stored property like: `public var foo: Type = ...` or `let name = ...`
+    # Avoid computed properties `{` and protocol requirements `get set` patterns
+    s = line.strip()
+    if not re.search(r"\b(var|let)\b", s):
+        return False
+    if '{' in s:
+        return False
+    if re.search(r"\b(get|set)\b", s):
+        return False
+    return '=' in s
 
 applied = []
 
@@ -189,6 +322,8 @@ for path, entries in entries_by_file.items():
     except Exception:
         continue
 
+    # For @Observable files, we DO allow deletions of unused stored properties.
+
     # Sort entries descending by line to keep indices stable when inserting
     entries.sort(key=lambda x: x['line'], reverse=True)
 
@@ -198,26 +333,29 @@ for path, entries in entries_by_file.items():
         if line_idx < 0 or line_idx >= len(lines):
             continue
 
-        # Skip unless it's an obviously safe declaration to annotate
-        # We limit to function/var/type declarations
         decl_line = lines[line_idx]
-        if not re.search(r"\b(func|var|let|struct|class|enum|protocol|extension)\b", decl_line):
+        hints = set(h.lower() for h in e.get('hints', []))
+
+        # 1) Remove unused imports (only when explicitly marked unused)
+        if decl_line.lstrip().startswith('import ') and 'unused' in hints:
+            del lines[line_idx]
+            changed = True
+            deleted.append(f"{path}:{e['line']} import {e.get('name','')}")
             continue
 
-        if already_annotated(lines, line_idx+1):
+        # 2) Remove single-line stored properties only if explicitly unused
+        if is_stored_property_line(decl_line) and 'unused' in hints:
+            del lines[line_idx]
+            changed = True
+            deleted.append(f"{path}:{e['line']} var/let {e.get('name','')}")
             continue
-
-        annotation = "@available(*, deprecated, message: \"Unused (Periphery)\") // periphery-deprecated\n"
-        lines.insert(line_idx, annotation)
-        changed = True
-        applied.append(f"{path}:{e['line']} {e['kind']} {e['name']}")
 
     if changed:
         with open(path, 'w', encoding='utf-8') as f:
             f.writelines(lines)
 
-with open(applied_path, 'w', encoding='utf-8') as f:
-    for a in applied:
+with open(deleted_log_path, 'w', encoding='utf-8') as f:
+    for a in deleted:
         f.write(a + "\n")
 
 # Compute removable file candidates conservatively:
@@ -249,32 +387,37 @@ for path, entries in entries_by_file.items():
 
 print("\n\n===REPORT-BEGIN===")
 print(json.dumps({
-    'applied_count': sum(1 for _ in open(applied_path, 'r', encoding='utf-8')) if os.path.isfile(applied_path) else 0,
+    'deleted_count': sum(1 for _ in open(deleted_log_path, 'r', encoding='utf-8')) if os.path.isfile(deleted_log_path) else 0,
     'removable_candidates': removable_candidates
 }, indent=2))
 print("===REPORT-END===\n\n")
 PY
 
 if [[ -s "$SCAN_JSON_1" ]] && grep -q '"kind"' "$SCAN_JSON_1"; then
-  python3 "$WORK_DIR/annotate.py" "$SCAN_JSON_1" "$APPLIED_MARKERS_TXT" | tee -a "$REPORT_TXT" >/dev/null
+  python3 "$WORK_DIR/annotate.py" "$SCAN_JSON_1" "$DELETED_SYMBOLS_TXT" | tee -a "$REPORT_TXT" >/dev/null
 else
   warn "No unused items found by Periphery (empty JSON). Skipping annotation."
   echo "\n===REPORT-BEGIN===" >> "$REPORT_TXT"
-  echo '{"applied_count":0,"removable_candidates":[]}' >> "$REPORT_TXT"
+  echo '{"deleted_count":0,"removable_candidates":[]}' >> "$REPORT_TXT"
   echo "===REPORT-END===\n" >> "$REPORT_TXT"
 fi
 
 REMOVABLE_JSON=$(sed -n '/===REPORT-BEGIN===/,/===REPORT-END===/p' "$REPORT_TXT" | sed '1d;$d')
-echo "$REMOVABLE_JSON" | "$PYTHON3_BIN" - <<'PY' > "$WORK_DIR/removable_extracted.txt"
+echo "$REMOVABLE_JSON" > "$WORK_DIR/removable.json"
+"$PYTHON3_BIN" - "$WORK_DIR/removable.json" <<'PY' > "$WORK_DIR/removable_extracted.txt"
 import json,sys
-d=json.load(sys.stdin)
-print("Applied annotations:", d.get('applied_count',0))
+with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    d = json.load(f)
+print("Deleted symbols:", d.get('deleted_count',0))
 print("\nPotentially removable files (manual delete, safe heuristic):")
 for p in d.get('removable_candidates',[]):
     print(p)
 PY
 
 cat "$WORK_DIR/removable_extracted.txt" | tee "$REMOVABLE_FILES_TXT"
+
+# Remove transient helper files
+rm -f "$WORK_DIR/removable_extracted.txt" "$WORK_DIR/removable.json" "$WORK_DIR/annotate.py"
 
 bold "\nRunning Periphery scan (pass 2, verification)..."
 periphery scan --config "$CONFIG_FILE" --format json --disable-update-check > "$SCAN_JSON_2" || {
@@ -293,8 +436,8 @@ echo "" | tee -a "$REPORT_TXT"
 bold "Summary"
 echo "- Unused reported (pass 1): $COUNT1" | tee -a "$REPORT_TXT"
 echo "- Unused reported (pass 2): $COUNT2" | tee -a "$REPORT_TXT"
-APPLIED_COUNT=$(wc -l < "$APPLIED_MARKERS_TXT" | tr -d ' ')
-echo "- Annotations applied: $APPLIED_COUNT" | tee -a "$REPORT_TXT"
+DELETED_COUNT=$(wc -l < "$DELETED_SYMBOLS_TXT" | tr -d ' ')
+echo "- Deleted symbols: $DELETED_COUNT" | tee -a "$REPORT_TXT"
 echo "- Removable file candidates listed in: $REMOVABLE_FILES_TXT" | tee -a "$REPORT_TXT"
 
 cat <<'EOT'
@@ -302,19 +445,17 @@ cat <<'EOT'
 ============================================================
  Result
 ============================================================
-  • Added @available(*, deprecated, ...) markers above unused
-    declarations to safely neutralize them without breaking builds.
-  • Suggested conservative file deletions (manual) where the entire
-    file appears to contain a single unused top-level type.
+  • Deleted clearly unused imports and single-line stored properties.
+  • Listed conservative whole-file removals where the file contains a
+    single unused top-level type (manual review recommended).
   • To review:
-      - .periphery_cleanup/applied_markers.txt
+      - .periphery_cleanup/deleted_symbols.txt
       - .periphery_cleanup/removable_files.txt
       - .periphery_cleanup/scan_2.json
 
  Tips
   - Re-run this script after code changes.
-  - For aggressive deletion, start from the suggested list and
-    remove files in Xcode first, then from disk.
+  - For whole-file deletion, confirm in Xcode first, then delete.
 
 ============================================================
 EOT

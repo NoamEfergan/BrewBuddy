@@ -22,3 +22,5 @@ DerivedData
 compile_commands.json
 fastlane/test_output
 fastlane/report.xml
+# Periphery cleanup artifacts
+.periphery_cleanup/

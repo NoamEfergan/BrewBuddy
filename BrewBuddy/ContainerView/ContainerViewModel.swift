@@ -1,5 +1,4 @@
 import Foundation
-import Models
 import SwiftData
 
 @Observable

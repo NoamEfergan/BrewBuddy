@@ -9,7 +9,6 @@ public enum CoffeeTheme {
         public static let primary = Color("AccentPrimary", bundle: .module)
 
         /// Secondary accent color - Coffee Brown
-        public static let secondary = Color("AccentSecondary", bundle: .module)
 
         /// Highlight accent color - Latte
         public static let highlight = Color("AccentHighlight", bundle: .module)
