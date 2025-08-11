@@ -8,6 +8,7 @@ final class ContainerViewModel {
     public var isShowingSuccessToast = false
     public var isShowingDeleteToast = false
     public var isShowingSuccessAddShotToast = false
+    public var someUnusedProperty: String = ""
 }
 
 enum Tabs {
